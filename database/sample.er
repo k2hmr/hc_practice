@@ -1,0 +1,90 @@
+title {label: "Data Modeling of Twitter", size: "20"}
+# Entities are declared in '[' ... ']'. All attributes after the entity header
+# up until the end of the file (or the next entity declaration) correspond
+# to this entity.
+[users] {bgcolor: "#fbfbdb"}
+  *user_id {label: "bigint, not null"}
+  user_name {label: "varchar, not null, uniq" }
+  name {label: "varchar, null"}
+  email {label: "varchar, not null, uniq" }
+  phone_number {label: "bigint, not null, uniq" }
+  birth_date { label: "datatime, null"}
+  biography { label: "varchar, null"}
+  profile_image {label: "varchar, null"}
+  avatar_image {label: "varchar, null"}
+  location {label: "varchar, null"}
+  website {label: "varchar, null"}
+  created_at { label: "datatime, not null"}
+  updated_at { label: "datatime, not null"}
+
+[tweets] {bgcolor: "#ececfc", size: "20"}
+  *tweet_id {label: "bigint, not null"}
+  user_id {label: "bigint, not null, FK(users)"}
+  content {label: "varchar, not null"}
+  created_at { label: "datatime, not null"}
+  updated_at { label: "datatime, not null"}
+
+[retweets] {bgcolor: "#ececfc", size: "20"}
+  *retweet_id {label: "bigint, not null"}
+  user_id {label: "bigint, not null, FK(users)"}
+  tweet_id {label: "bigint, not null, FK(tweets)"}
+  created_at { label: "datatime, not null"}
+  updated_at { label: "datatime, not null"}
+
+[follows] {bgcolor: "#eee0a0", size: "20"}
+  *follow_id {label: "bigint, not null"}
+  user_id {label: "bigint, not null, FK(users)"}
+  created_at { label: "datatime, not null"}
+  updated_at { label: "datatime, not null"}
+
+[follow_notices] {bgcolor: "#eee0a0", size: "20"}
+  *follow_notice_id {label: "bigint, not null"}
+  user_id {label: "bigint, not null, FK(users)"}
+  follow_id {label: "bigint, not null, FK(follows)"}
+  created_at { label: "datatime, not null"}
+  updated_at { label: "datatime, not null"}
+
+[direct_messages] {bgcolor: "#eee0a0", size: "20"}
+  *direct_message_id {label: "bigint, not null"}
+  user_id {label: "bigint, not null, FK(users)"}
+  follow_id {label: "bigint, not null, FK(follows)"}
+  created_at { label: "datatime, not null"}
+  updated_at { label: "datatime, not null"}
+
+[book_marks] {bgcolor: "#d0e0d0"}
+  *book_mark_id {label: "bigint, not null"}
+  user_id {label: "bigint, not null, FK(users)"}
+  tweet_id {label: "bigint, not null, FK(tweets)"}
+  created_at { label: "datatime, not null"}
+  updated_at { label: "datatime, not null"}
+
+[likes] {bgcolor: "#fcecec"}
+  *like_id {label: "bigint, not null"}
+  user_id {label: "bigint, not null, FK(users)"}
+  tweet_id {label: "bigint, not null, FK(tweets)"}
+  created_at { label: "datatime, not null"}
+  updated_at { label: "datatime, not null"}
+
+[like_notices] {bgcolor: "#fcecec", size: "20"}
+  *like_notice_id {label: "bigint, not null"}
+  user_id {label: "bigint, not null, FK(users)"}
+  like_id {label: "bigint, not null, FK(likes)"}
+  created_at { label: "datatime, not null"}
+  updated_at { label: "datatime, not null"}
+
+# Relationships
+
+users *--1 tweets
+users *--1 retweets
+tweets *--1 retweets 
+users *--1 follows
+follows *--1 follow_notices
+users *--1 follow_notices
+follows *--1 direct_messages
+users *--1 direct_messages
+users *--1 book_marks
+tweets *--1 book_marks
+users *--1 likes
+tweets *--1 likes
+users *--1 like_notices
+likes *--1 like_notices 
