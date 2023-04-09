@@ -1,6 +1,10 @@
 const taskValue = document.getElementsByClassName("task_value")[0];
 const taskSubmit = document.getElementsByClassName("task_submit")[0];
 const taskList = document.getElementsByClassName("task_list")[0];
+const modal = document.getElementById("modal");
+const deleteCancelButton = document.getElementById("delete_cancel");
+const deleteOKButton = document.getElementById("delete_ok");
+let deletedTask;
 
 const reloadTaskStatus = () => {
   const tasksCount = taskList.childElementCount;
@@ -39,9 +43,9 @@ const addTasks = (task) => {
   let updatedTask;
   let chosenTaskLabel = editButton.closest("li").children[0];
 
-  const deleteButton = document.createElement("button");
-  deleteButton.innerHTML = "削除";
-  listItem.appendChild(deleteButton);
+  const openModalButton = document.createElement("button");
+  openModalButton.innerHTML = "削除";
+  listItem.appendChild(openModalButton);
 
   taskList.appendChild(listItem);
   reloadTaskStatus();
@@ -56,10 +60,10 @@ const addTasks = (task) => {
     reloadTaskStatus();
   });
 
-  deleteButton.addEventListener("click", (e) => {
+  openModalButton.addEventListener("click", (e) => {
     e.preventDefault();
-    deleteTasks(deleteButton);
-    reloadTaskStatus();
+    modal.style.display = "block";
+    deletedTask = openModalButton.closest("li");
   });
 };
 
@@ -91,10 +95,28 @@ const updateTasks = (editButton, updatedTask, chosenTaskLabel) => {
   return updatedTask;
 };
 
-const deleteTasks = (deleteButton) => {
-  const chosenTask = deleteButton.closest("li");
-  taskList.removeChild(chosenTask);
+const deleteTasks = (targetTask) => {
+  taskList.removeChild(targetTask);
 };
+
+addEventListener("click", outsideClose);
+function outsideClose(e) {
+  if (e.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+deleteOKButton.addEventListener("click", (e) => {
+  e.preventDefault();
+  modal.style.display = "none";
+  deleteTasks(deletedTask);
+  reloadTaskStatus();
+});
+
+deleteCancelButton.addEventListener("click", (e) => {
+  e.preventDefault();
+  modal.style.display = "none";
+});
 
 taskSubmit.addEventListener("click", (e) => {
   e.preventDefault();
