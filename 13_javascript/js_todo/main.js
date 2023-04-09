@@ -12,7 +12,8 @@ const reloadTaskStatus = () => {
   const taskStatusMessage = `全てのタスク：${tasksCount} 完了済み：${checkboxCount} 未完了：${
     tasksCount - checkboxCount
   }`;
-  document.getElementById("task_status").innerHTML = taskStatusMessage;
+  document.getElementsByClassName("task_status")[0].innerHTML =
+    taskStatusMessage;
 };
 
 reloadTaskStatus();
@@ -22,6 +23,7 @@ const addTasks = (task) => {
   const label = document.createElement("label");
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
+  checkbox.value = task;
   checkbox.addEventListener("change", () => {
     reloadTaskStatus();
   });
@@ -30,6 +32,13 @@ const addTasks = (task) => {
   label.appendChild(checkbox);
   label.appendChild(document.createTextNode(`${task}`));
 
+  const editButton = document.createElement("button");
+  editButton.innerHTML = "編集";
+  listItem.appendChild(editButton);
+  let isEditted = false;
+  let updatedTask;
+  let chosenTaskLabel = editButton.closest("li").children[0];
+
   const deleteButton = document.createElement("button");
   deleteButton.innerHTML = "削除";
   listItem.appendChild(deleteButton);
@@ -37,11 +46,49 @@ const addTasks = (task) => {
   taskList.appendChild(listItem);
   reloadTaskStatus();
 
+  editButton.addEventListener("click", (e) => {
+    e.preventDefault();
+    isEditted = !isEditted;
+    updatedTask = isEditted
+      ? editTasks(editButton, updatedTask, chosenTaskLabel)
+      : updateTasks(editButton, updatedTask, chosenTaskLabel);
+
+    reloadTaskStatus();
+  });
+
   deleteButton.addEventListener("click", (e) => {
     e.preventDefault();
     deleteTasks(deleteButton);
     reloadTaskStatus();
   });
+};
+
+const editTasks = (editButton, updatedTask, chosenTaskLabel) => {
+  let chosenTask = chosenTaskLabel.children[0];
+  chosenTaskLabel.removeChild(chosenTask);
+  chosenTaskLabel.lastChild.remove();
+  updatedTask = document.createElement("input");
+  const preText = chosenTask.value;
+  updatedTask.type = "text";
+  updatedTask.value = preText;
+  chosenTaskLabel.appendChild(updatedTask);
+  editButton.innerHTML = "保存";
+
+  return updatedTask;
+};
+
+const updateTasks = (editButton, updatedTask, chosenTaskLabel) => {
+  const updatedValue = updatedTask.value;
+  updatedTask.type = "checkbox";
+  updatedTask.addEventListener("change", () => {
+    reloadTaskStatus();
+  });
+  updatedTask.value = updatedValue;
+  chosenTaskLabel.appendChild(updatedTask);
+  chosenTaskLabel.appendChild(document.createTextNode(`${updatedValue}`));
+  editButton.innerHTML = "編集";
+
+  return updatedTask;
 };
 
 const deleteTasks = (deleteButton) => {
